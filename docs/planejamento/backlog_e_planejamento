@@ -1,0 +1,57 @@
+# Planejamento do Projeto e Backlog de Tarefas - fast Traveller
+
+## 1. Metodologia e Organização da Equipe
+
+O desenvolvimento do **fast Traveller** adota metodologias ágeis (Scrum adaptado com fluxo Kanban). O gerenciamento das tarefas é realizado por meio de quadros no **GitHub Projects** / **Trello**.
+
+### Papéis da Equipe
+* **Scrum Master / Product Owner:** Responsável pelo gerenciamento do backlog, priorização de requisitos e alinhamento do escopo.
+* **Desenvolvedor Full Stack (Backend Main):** Responsável pela modelagem do banco de dados, API REST em Django e integração com a API externa.
+* **Desenvolvedor Full Stack (Frontend Main):** Responsável pelos protótipos de interface, estilização (CSS/Bootstrap) e consumo das APIs.
+
+---
+
+## 2. Cronograma de Sprints e Entregas
+
+| Sprint | Período / Fase | Foco Principal | Entregáveis Principais |
+| :--- | :--- | :--- | :--- |
+| **Sprint 1** | Fase 1 - Concepção | Documentação, Arquitetura e Protótipos | Visão geral, Requisitos, Modelo ER, Contrato da API, Protótipos e Backlog. |
+| **Sprint 2** | Fase 2 - Base & Auth | Setup do Projeto e Autenticação | Configuração do Django, modelos de dados, fluxo de login/cadastro e layout base. |
+| **Sprint 3** | Fase 2 - Core & API | Cadastro de Viagens e Integração | Formulário de preferências, integração com Google Places API e geração do roteiro. |
+| **Sprint 4** | Fase 2 - Finalização | Relatórios, Testes e Deploy | Dashboard de gastos por categoria, testes unitários, documentação final e deploy no Render. |
+
+---
+
+## 3. Product Backlog (Histórias de Usuário)
+
+### Épico 1: Gestão de Acesso e Perfil
+* **US01 - Cadastro de Usuário**
+  * **Como** novo visitante, **quero** criar uma conta com nome, e-mail e senha, **para** acessar e salvar meus roteiros de viagem.
+  * **Critérios de Aceitação:** Validação de campos obrigatórios, hash seguro de senha e redirecionamento para o login pós-cadastro.
+* **US02 - Autenticação e Sessão**
+  * **Como** usuário cadastrado, **quero** realizar login no sistema, **para** acessar minhas viagens anteriores.
+  * **Critérios de Aceitação:** Bloqueio de rotas privadas para usuários não autenticados e exibição de mensagens claras em caso de credenciais inválidas.
+
+### Épico 2: Planejamento de Viagens e Roteiros
+* **US03 - Parâmetros da Viagem**
+  * **Como** viajante, **quero** informar o destino, duração em dias, orçamento e categorias de interesse (ex: museu, cinema), **para** gerar um roteiro personalizado.
+  * **Critérios de Aceitação:** O orçamento deve aceitar apenas valores numéricos positivos e a escolha de categorias deve ser de fácil seleção.
+* **US04 - Recomendação de Atrações (API Externa)**
+  * **Como** viajante, **quero** visualizar sugestões de atrações reais do meu destino obtidas via API, **para** montar minha programação.
+  * **Critérios de Aceitação:** Retorno de atrações com nome, categoria e custo estimado; em caso de falha da API externa, o sistema deve apresentar fallback com dados locais sem quebrar a aplicação.
+
+### Épico 3: Gestão Financeira e Relatórios
+* **US05 - Relatório de Gastos por Categoria**
+  * **Como** viajante, **quero** visualizar um resumo financeiro da viagem com o saldo restante e gastos por categoria, **para** não ultrapassar meu orçamento.
+  * **Critérios de Aceitação:** Cálculo automático da soma das atrações selecionadas, exibição do saldo restante (`orçamento_total - custo_total`) e gráfico/tabela comparativa.
+
+---
+
+## 4. Definição de Pronto (Definition of Done - DoD)
+
+Para que uma tarefa/história de usuário seja considerada finalizada, ela deve atender aos seguintes critérios:
+1. Código revisado e integrado à branch principal via Pull Request.
+2. Sem erros conhecidos de execução local ou no ambiente de staging.
+3. Campos de entrada devidamente validados (evitando dados corrompidos ou falhas de segurança).
+4. Layout responsivo testado em telas mobile e desktop.
+5. Atualização da documentação relevante no repositório.
