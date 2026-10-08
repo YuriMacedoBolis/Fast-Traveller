@@ -41,13 +41,3 @@ O sistema é composto por 5 telas principais que cobrem todo o fluxo da aplicaç
 
 ---
 
-## 3. Ficheiros dos Protótipos (Wireframes)
-
-Os protótipos de baixa e média fidelidade das telas foram desenvolvidos e podem ser consultados nos seguintes formatos:
-
-* **Link da Ferramenta de Design (Figma):** [Link para o projeto no Figma] *(opcional)*
-* **Ficheiros de Imagem em Repositório:**
-  * `docs/prototipos/wireframe_login.png`
-  * `docs/prototipos/wireframe_dashboard.png`
-  * `docs/prototipos/wireframe_formulario_viagem.png`
-  * `docs/prototipos/wireframe_roteiro_e_relatorio.png`
