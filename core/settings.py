@@ -1,9 +1,3 @@
-"""Configuracoes do projeto fast Traveller.
-
-Todas as configuracoes sensiveis sao lidas de variaveis de ambiente. Em
-desenvolvimento, elas podem vir de um arquivo .env (nunca versionado).
-"""
-
 import os
 from pathlib import Path
 
@@ -16,18 +10,11 @@ load_dotenv(BASE_DIR / ".env")
 
 
 def env_list(nome, padrao=""):
-    """Le uma variavel de ambiente separada por virgulas e devolve uma lista."""
-    bruto = os.environ.get(nome, padrao)
-    return [item.strip() for item in bruto.split(",") if item.strip()]
+    return [item.strip() for item in os.environ.get(nome, padrao).split(",") if item.strip()]
 
 
-# ---------------------------------------------------------------------------
-# Nucleo
-# ---------------------------------------------------------------------------
 DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 
-# Em producao a chave e obrigatoria. Em desenvolvimento geramos uma efemera
-# para que o projeto rode logo apos o clone, sem segredo algum no repositorio.
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
     if DEBUG:
@@ -35,10 +22,7 @@ if not SECRET_KEY:
 
         SECRET_KEY = get_random_secret_key()
     else:
-        raise RuntimeError(
-            "DJANGO_SECRET_KEY nao definida. Configure a variavel de ambiente "
-            "antes de executar em producao."
-        )
+        raise RuntimeError("DJANGO_SECRET_KEY nao definida.")
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
 
@@ -58,10 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Terceiros
     "rest_framework",
     "drf_spectacular",
-    # Aplicacoes do projeto
     "contas",
     "viagens",
 ]
@@ -99,16 +81,7 @@ ASGI_APPLICATION = "core.asgi.application"
 
 AUTH_USER_MODEL = "contas.Usuario"
 
-
-# ---------------------------------------------------------------------------
-# Banco de dados
-# ---------------------------------------------------------------------------
-# Em producao usamos o pooler do Supabase em session mode (porta 5432).
-# A conexao direta do Supabase e IPv6-only e o Render nao tem IPv6 de saida.
 SQLITE_PADRAO = "sqlite:///" + str(BASE_DIR / "db.sqlite3")
-
-# Uma DATABASE_URL definida porem vazia (comum em .env preenchido pela metade)
-# deve cair no SQLite de desenvolvimento, e nao quebrar a configuracao.
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip() or SQLITE_PADRAO
 
 DATABASES = {
@@ -120,55 +93,32 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation."
-        "UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
-# ---------------------------------------------------------------------------
-# Internacionalizacao
-# ---------------------------------------------------------------------------
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_TZ = True
 
-
-# ---------------------------------------------------------------------------
-# Arquivos estaticos (bloco da trilha de frontend/deploy)
-# ---------------------------------------------------------------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    },
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-# ---------------------------------------------------------------------------
-# Autenticacao (web)
-# ---------------------------------------------------------------------------
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/viagens/"
 LOGOUT_REDIRECT_URL = "/login/"
 
-
-# ---------------------------------------------------------------------------
-# Cache
-# ---------------------------------------------------------------------------
-# DatabaseCache e compartilhado entre os workers do gunicorn e sobrevive ao
-# spin-down do plano free do Render, ao contrario do LocMemCache.
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
@@ -178,19 +128,11 @@ CACHES = {
     }
 }
 
-
-# ---------------------------------------------------------------------------
-# API externa - Geoapify (bloco da trilha de backend)
-# ---------------------------------------------------------------------------
 GEOAPIFY_API_KEY = os.environ.get("GEOAPIFY_API_KEY", "")
 GEOAPIFY_TIMEOUT = float(os.environ.get("GEOAPIFY_TIMEOUT", "5"))
 GEOAPIFY_CACHE_TTL = int(os.environ.get("GEOAPIFY_CACHE_TTL", 60 * 60 * 24))
 GEOAPIFY_RAIO_PADRAO_M = int(os.environ.get("GEOAPIFY_RAIO_PADRAO_M", "5000"))
 
-
-# ---------------------------------------------------------------------------
-# Django REST Framework (bloco da trilha de backend)
-# ---------------------------------------------------------------------------
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -211,21 +153,13 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "fast Traveller API",
-    "DESCRIPTION": (
-        "API REST do fast Traveller: planejamento de roteiros de viagem com "
-        "controle de orcamento. UniCEUB - Desenvolvimento Web."
-    ),
+    "DESCRIPTION": "API REST do fast Traveller: planejamento de roteiros de viagem com controle de orcamento.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
 }
 
-
-# ---------------------------------------------------------------------------
-# Seguranca em producao (bloco da trilha de frontend/deploy)
-# ---------------------------------------------------------------------------
 if not DEBUG:
-    # O Render termina o TLS no proxy; sem isso o Django nao reconhece HTTPS.
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
@@ -240,21 +174,12 @@ SESSION_COOKIE_SAMESITE = "Lax"
 SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"
 
-
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "simples": {
-            "format": "[{levelname}] {asctime} {name}: {message}",
-            "style": "{",
-        }
+        "simples": {"format": "[{levelname}] {asctime} {name}: {message}", "style": "{"}
     },
-    "handlers": {
-        "console": {"class": "logging.StreamHandler", "formatter": "simples"}
-    },
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "simples"}},
     "root": {"handlers": ["console"], "level": "INFO"},
 }

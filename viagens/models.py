@@ -9,30 +9,20 @@ from django.db.models import Q, Sum
 
 
 class Categoria(models.Model):
-    """Categoria de lazer escolhida pelo viajante.
-
-    Guarda tambem o mapeamento para as categorias da API externa (Geoapify) e a
-    heuristica de custo/tempo, de modo que esses valores possam ser ajustados
-    pelo admin sem precisar de um novo deploy.
-    """
-
     nome = models.CharField("nome", max_length=100, unique=True)
     slug = models.SlugField("slug", max_length=100, unique=True)
     geoapify_categories = models.CharField(
-        "categorias na Geoapify",
-        max_length=255,
-        blank=True,
-        help_text="Lista separada por virgula. Ex.: entertainment.museum",
+        "categorias na Geoapify", max_length=255, blank=True
     )
     custo_medio = models.DecimalField(
-        "custo medio estimado (R$)",
+        "custo medio (R$)",
         max_digits=10,
         decimal_places=2,
         default=Decimal("0.00"),
         validators=[MinValueValidator(Decimal("0"))],
     )
     tempo_medio_horas = models.DecimalField(
-        "tempo medio estimado (horas)",
+        "tempo medio (horas)",
         max_digits=4,
         decimal_places=2,
         default=Decimal("1.00"),
@@ -50,13 +40,10 @@ class Categoria(models.Model):
 
     @property
     def lista_geoapify(self):
-        """Categorias da Geoapify como lista, ja sem espacos em branco."""
         return [c.strip() for c in self.geoapify_categories.split(",") if c.strip()]
 
 
 class Viagem(models.Model):
-    """Viagem/roteiro criado por um usuario (UC02, UC03)."""
-
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -66,8 +53,7 @@ class Viagem(models.Model):
     )
     destino = models.CharField("destino", max_length=200)
     duracao_dias = models.PositiveIntegerField(
-        "duração (dias)",
-        validators=[MinValueValidator(1), MaxValueValidator(60)],
+        "duração (dias)", validators=[MinValueValidator(1), MaxValueValidator(60)]
     )
     orcamento_total = models.DecimalField(
         "orçamento total (R$)",
@@ -80,11 +66,8 @@ class Viagem(models.Model):
     )
     data_inicio = models.DateField("data de início")
     data_criacao = models.DateTimeField("data de criação", auto_now_add=True)
-
-    # Coordenadas resolvidas pelo geocoding da API externa. Ficam em cache aqui
-    # para nao refazer a mesma consulta a cada busca de atracoes.
-    destino_lat = models.FloatField("latitude do destino", null=True, blank=True)
-    destino_lon = models.FloatField("longitude do destino", null=True, blank=True)
+    destino_lat = models.FloatField("latitude", null=True, blank=True)
+    destino_lon = models.FloatField("longitude", null=True, blank=True)
 
     class Meta:
         db_table = "viagens"
@@ -104,13 +87,11 @@ class Viagem(models.Model):
 
     @property
     def custo_total_estimado(self):
-        """Soma do custo estimado das atracoes selecionadas."""
         total = self.atracoes.aggregate(total=Sum("custo_estimado"))["total"]
         return total or Decimal("0.00")
 
     @property
     def saldo_restante(self):
-        """Quanto sobra do orcamento. Pode ser negativo se estourar."""
         return self.orcamento_total - self.custo_total_estimado
 
     @property
@@ -120,13 +101,6 @@ class Viagem(models.Model):
 
 
 class AtracaoViagem(models.Model):
-    """Atracao selecionada para o roteiro de uma viagem.
-
-    Corresponde a tabela de juncao `atracao_viagem` do modelo de dados. Os
-    registros podem vir da API externa (com `api_external_id` preenchido) ou do
-    catalogo local usado como fallback.
-    """
-
     viagem = models.ForeignKey(
         Viagem,
         on_delete=models.CASCADE,
@@ -158,11 +132,9 @@ class AtracaoViagem(models.Model):
     )
     endereco = models.CharField("endereço", max_length=255, blank=True)
     api_external_id = models.CharField(
-        "identificador na API externa", max_length=255, blank=True, db_index=True
+        "id na API externa", max_length=255, blank=True, db_index=True
     )
-    dia = models.PositiveSmallIntegerField(
-        "dia do roteiro", null=True, blank=True
-    )
+    dia = models.PositiveSmallIntegerField("dia do roteiro", null=True, blank=True)
 
     class Meta:
         db_table = "atracao_viagem"
