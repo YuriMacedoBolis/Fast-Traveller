@@ -1,0 +1,41 @@
+# Ambiente e segredos
+.env
+.env.local
+.env.*.local
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+*.log
+
+# Testes e cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Relatorios brutos de seguranca (os .md consolidados sao versionados)
+security/*.json
+security/*.html
+
+# Editores e SO
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

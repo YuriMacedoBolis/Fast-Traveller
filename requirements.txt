@@ -1,0 +1,9 @@
+Django==5.2.9
+djangorestframework==3.18.3
+drf-spectacular==0.30.0
+psycopg[binary]==3.3.9
+dj-database-url==3.1.2
+gunicorn==27.0.1
+whitenoise[brotli]==6.12.0
+requests==2.34.2
+python-dotenv==1.2.4

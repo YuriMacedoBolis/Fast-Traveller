@@ -1,0 +1,278 @@
+/* ==========================================================================
+   fast Traveller - folha de estilo base
+   Identidade visual definida na Fase 1 (docs/prototipos).
+   ========================================================================== */
+
+:root {
+  /* Paleta */
+  --azul-viagem: #1e3a8a;
+  --laranja-aventura: #f97316;
+  --fundo-claro: #f8fafc;
+  --texto-principal: #0f172a;
+  --sucesso: #16a34a;
+  --alerta: #dc2626;
+
+  /* Derivadas */
+  --azul-escuro: #172f6e;
+  --cinza-borda: #e2e8f0;
+  --cinza-texto: #64748b;
+  --branco: #ffffff;
+
+  /* Tipografia */
+  --fonte: "Inter", "Roboto", system-ui, -apple-system, sans-serif;
+
+  /* Formas */
+  --raio: 10px;
+  --sombra: 0 1px 3px rgb(15 23 42 / 0.12);
+  --sombra-media: 0 4px 12px rgb(15 23 42 / 0.1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--texto-principal);
+  background-color: var(--fundo-claro);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  margin: 0 0 0.5em;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+small,
+.legenda {
+  font-size: 0.875rem;
+  color: var(--cinza-texto);
+}
+
+a {
+  color: var(--azul-viagem);
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 0 1rem;
+}
+
+.conteudo {
+  padding-block: 2rem;
+  min-height: 60vh;
+}
+
+/* --------------------------------------------------------------------------
+   Cabecalho e rodape
+   -------------------------------------------------------------------------- */
+.cabecalho {
+  background: var(--azul-viagem);
+  color: var(--branco);
+  box-shadow: var(--sombra);
+}
+
+.cabecalho__interno {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--branco);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.marca__logo {
+  width: 28px;
+  height: 28px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  color: var(--branco);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  opacity: 0.92;
+}
+
+.nav a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.rodape {
+  border-top: 1px solid var(--cinza-borda);
+  padding-block: 1.5rem;
+  color: var(--cinza-texto);
+  font-size: 0.875rem;
+  background: var(--branco);
+}
+
+/* --------------------------------------------------------------------------
+   Botoes
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: 0.625rem 1.125rem;
+  border: 1px solid transparent;
+  border-radius: var(--raio);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.btn:hover {
+  filter: brightness(0.94);
+}
+
+.btn--primario {
+  background: var(--azul-viagem);
+  color: var(--branco);
+}
+
+.btn--acao {
+  background: var(--laranja-aventura);
+  color: var(--branco);
+}
+
+.btn--secundario {
+  background: var(--branco);
+  color: var(--azul-viagem);
+  border-color: var(--cinza-borda);
+}
+
+.btn--perigo {
+  background: var(--alerta);
+  color: var(--branco);
+}
+
+/* --------------------------------------------------------------------------
+   Cartoes
+   -------------------------------------------------------------------------- */
+.cartao {
+  background: var(--branco);
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 1.25rem;
+}
+
+.grade-cartoes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Mensagens
+   -------------------------------------------------------------------------- */
+.mensagem {
+  padding: 0.75rem 1rem;
+  border-radius: var(--raio);
+  border-left: 4px solid;
+  margin-bottom: 0.75rem;
+  background: var(--branco);
+}
+
+.mensagem--success {
+  border-color: var(--sucesso);
+}
+
+.mensagem--error {
+  border-color: var(--alerta);
+}
+
+.mensagem--warning {
+  border-color: var(--laranja-aventura);
+}
+
+.mensagem--info {
+  border-color: var(--azul-viagem);
+}
+
+/* --------------------------------------------------------------------------
+   Utilitarios
+   -------------------------------------------------------------------------- */
+.texto-sucesso {
+  color: var(--sucesso);
+}
+
+.texto-alerta {
+  color: var(--alerta);
+}
+
+.hero {
+  text-align: center;
+  padding-block: 3rem;
+}
+
+.hero p {
+  max-width: 54ch;
+  margin-inline: auto;
+  color: var(--cinza-texto);
+}
+
+.acoes {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsivo
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .grade-cartoes {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+}

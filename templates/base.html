@@ -1,0 +1,53 @@
+{% load static %}<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}fast Traveller{% endblock %}</title>
+  <meta name="description" content="Planeje roteiros de viagem personalizados de acordo com seu destino, tempo disponivel e orcamento.">
+  <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block css_extra %}{% endblock %}
+</head>
+<body>
+  <header class="cabecalho no-print">
+    <div class="container cabecalho__interno">
+      <a class="marca" href="{% url 'home' %}">
+        <img class="marca__logo" src="{% static 'img/logo.svg' %}" alt="">
+        fast Traveller
+      </a>
+      <nav class="nav">
+        {% if user.is_authenticated %}
+          <a href="/viagens/">Minhas viagens</a>
+          <a href="/viagens/nova/">Nova viagem</a>
+          <a href="/api/docs/">API</a>
+          <form action="/logout/" method="post" style="display:inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--secundario">Sair</button>
+          </form>
+        {% else %}
+          <a href="/api/docs/">API</a>
+          <a href="/login/">Entrar</a>
+          <a class="btn btn--acao" href="/cadastro/">Criar conta</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container conteudo">
+    {% include "partials/_messages.html" %}
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="rodape no-print">
+    <div class="container">
+      fast Traveller &middot; UniCEUB &middot; Desenvolvimento Web
+    </div>
+  </footer>
+
+  {% block js_extra %}{% endblock %}
+</body>
+</html>

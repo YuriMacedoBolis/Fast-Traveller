@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block titulo %}fast Traveller &middot; Planeje sua viagem{% endblock %}
+
+{% block conteudo %}
+  <section class="hero">
+    <h1>Planeje sua viagem sem complicacao</h1>
+    <p>
+      Informe o destino, quantos dias voce tem e quanto pretende gastar.
+      O fast Traveller busca atracoes reais no seu destino e monta um roteiro
+      que cabe no seu orcamento.
+    </p>
+    <div class="acoes">
+      <a class="btn btn--acao" href="/cadastro/">Criar conta gratis</a>
+      <a class="btn btn--secundario" href="/login/">Ja tenho conta</a>
+    </div>
+  </section>
+
+  <section class="grade-cartoes">
+    <article class="cartao">
+      <h3>Roteiros no seu orcamento</h3>
+      <p class="legenda">
+        Cada atracao tem custo estimado, e o sistema mostra quanto ainda sobra
+        do que voce planejou gastar.
+      </p>
+    </article>
+    <article class="cartao">
+      <h3>Atracoes reais do destino</h3>
+      <p class="legenda">
+        Museus, cinemas, parques e restaurantes buscados em uma base de pontos
+        de interesse de verdade.
+      </p>
+    </article>
+    <article class="cartao">
+      <h3>Relatorio de gastos</h3>
+      <p class="legenda">
+        Veja a distribuicao dos custos por categoria e leve o relatorio
+        impresso ou em planilha.
+      </p>
+    </article>
+  </section>
+{% endblock %}
