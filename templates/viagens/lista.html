@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block titulo %}Minhas viagens &middot; fast Traveller{% endblock %}
+
+{% block conteudo %}
+  <div class="cabecalho-pagina">
+    <div>
+      <h1>Minhas viagens</h1>
+      <p class="legenda">
+        {% if viagens %}
+          {{ viagens|length }} viagem{{ viagens|length|pluralize:"ns" }} encontrada{{ viagens|length|pluralize:"s" }}.
+        {% else %}
+          Nenhuma viagem por aqui ainda.
+        {% endif %}
+      </p>
+    </div>
+    <a class="btn btn--acao" href="{% url 'viagens:nova' %}">+ Nova viagem</a>
+  </div>
+
+  <form class="barra-busca" method="get">
+    {% include "partials/_campo.html" with campo=busca.destino %}
+    {% include "partials/_campo.html" with campo=busca.data_inicio_apos %}
+    {% include "partials/_campo.html" with campo=busca.orcamento_min %}
+    <div class="barra-busca__acoes">
+      <button type="submit" class="btn btn--primario">Buscar</button>
+      {% if tem_filtro %}
+        <a class="btn btn--secundario" href="{% url 'viagens:lista' %}">Limpar</a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if viagens %}
+    <div class="grade-cartoes">
+      {% for viagem in viagens %}
+        <article class="cartao cartao-viagem">
+          <div class="cartao-viagem__topo">
+            <h3>{{ viagem.destino }}</h3>
+            {% if viagem.saldo_restante < 0 %}
+              <span class="etiqueta etiqueta--vermelha">Acima do orçamento</span>
+            {% else %}
+              <span class="etiqueta etiqueta--verde">No orçamento</span>
+            {% endif %}
+          </div>
+
+          <p class="legenda">
+            A partir de {{ viagem.data_inicio|date:"d/m/Y" }} &middot;
+            {{ viagem.duracao_dias }} dia{{ viagem.duracao_dias|pluralize }}
+          </p>
+
+          <div class="dados-viagem">
+            <div>
+              <span class="dado__rotulo">Orçamento</span>
+              <span class="dado__valor">R$ {{ viagem.orcamento_total|floatformat:2 }}</span>
+            </div>
+            <div>
+              <span class="dado__rotulo">Saldo</span>
+              <span class="dado__valor {% if viagem.saldo_restante < 0 %}texto-alerta{% else %}texto-sucesso{% endif %}">
+                R$ {{ viagem.saldo_restante|floatformat:2 }}
+              </span>
+            </div>
+          </div>
+
+          <p class="legenda">
+            {{ viagem.atracoes.count }} atraç{{ viagem.atracoes.count|pluralize:"ão,ões" }} no roteiro
+          </p>
+
+          <div class="cartao-acoes">
+            <a class="btn btn--secundario" href="{% url 'viagens:editar' viagem.pk %}">Editar</a>
+            <a class="btn btn--secundario" href="{% url 'viagens:excluir' viagem.pk %}">Excluir</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="vazio">
+      <span class="vazio__icone">&#9992;</span>
+      {% if tem_filtro %}
+        <h2>Nada encontrado</h2>
+        <p class="legenda">Nenhuma viagem corresponde aos filtros informados.</p>
+        <a class="btn btn--secundario" href="{% url 'viagens:lista' %}">Limpar busca</a>
+      {% else %}
+        <h2>Sua proxima viagem comeca aqui</h2>
+        <p class="legenda">Cadastre um destino, informe seu orçamento e monte o roteiro.</p>
+        <a class="btn btn--acao" href="{% url 'viagens:nova' %}">Criar primeira viagem</a>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

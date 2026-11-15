@@ -4,6 +4,7 @@
 
 {% block conteudo %}
   <section class="hero">
+    <span class="selo"><span class="selo__ponto"></span> Roteiros que cabem no seu bolso</span>
     <h1>Planeje sua viagem sem complicacao</h1>
     <p>
       Informe o destino, quantos dias voce tem e quanto pretende gastar.
@@ -11,13 +12,14 @@
       que cabe no seu orcamento.
     </p>
     <div class="acoes">
-      <a class="btn btn--acao" href="/cadastro/">Criar conta gratis</a>
-      <a class="btn btn--secundario" href="/login/">Ja tenho conta</a>
+      <a class="btn btn--acao" href="{% url 'cadastro' %}">Criar conta gratis</a>
+      <a class="btn btn--secundario" href="{% url 'login' %}">Ja tenho conta</a>
     </div>
   </section>
 
   <section class="grade-cartoes">
     <article class="cartao">
+      <span class="icone-cartao">&#128176;</span>
       <h3>Roteiros no seu orcamento</h3>
       <p class="legenda">
         Cada atracao tem custo estimado, e o sistema mostra quanto ainda sobra
@@ -25,6 +27,7 @@
       </p>
     </article>
     <article class="cartao">
+      <span class="icone-cartao">&#127963;</span>
       <h3>Atracoes reais do destino</h3>
       <p class="legenda">
         Museus, cinemas, parques e restaurantes buscados em uma base de pontos
@@ -32,6 +35,7 @@
       </p>
     </article>
     <article class="cartao">
+      <span class="icone-cartao">&#128202;</span>
       <h3>Relatorio de gastos</h3>
       <p class="legenda">
         Veja a distribuicao dos custos por categoria e leve o relatorio

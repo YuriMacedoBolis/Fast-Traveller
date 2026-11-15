@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block titulo %}Criar conta &middot; fast Traveller{% endblock %}
+
+{% block conteudo %}
+  <div class="painel">
+    <div class="cartao">
+      <h1>Criar conta</h1>
+      <p class="legenda">É rapido: em seguida voce ja pode montar seu primeiro roteiro.</p>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for campo in form %}
+          {% include "partials/_campo.html" with campo=campo %}
+        {% endfor %}
+        <div class="form-acoes">
+          <button type="submit" class="btn btn--acao">Criar conta</button>
+          <a class="btn btn--secundario" href="{% url 'login' %}">Ja tenho conta</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
