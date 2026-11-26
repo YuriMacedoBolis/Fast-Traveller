@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %}Relatório {{ viagem.destino }} &middot; fast Traveller{% endblock %}
 
@@ -14,6 +15,7 @@
       </p>
     </div>
     <div class="cartao-acoes no-print">
+      <button type="button" class="btn btn--primario" id="botao-imprimir">Imprimir</button>
       <a class="btn btn--acao" href="{% url 'viagens:relatorio_csv' viagem.pk %}">Exportar CSV</a>
     </div>
   </div>
@@ -115,4 +117,8 @@
       </div>
     </section>
   {% endif %}
+{% endblock %}
+
+{% block js_extra %}
+  <script src="{% static 'js/relatorio.js' %}"></script>
 {% endblock %}

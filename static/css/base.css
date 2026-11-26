@@ -1032,3 +1032,50 @@ a:hover {
   text-align: right !important;
   white-space: nowrap;
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    font-size: 12pt;
+  }
+
+  .conteudo {
+    padding: 0;
+    animation: none;
+  }
+
+  .bloco,
+  .indicador {
+    box-shadow: none;
+    animation: none;
+    break-inside: avoid;
+  }
+
+  .indicadores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grafico-barras__linha {
+    grid-template-columns: 150px 1fr 150px;
+    align-items: center;
+  }
+
+  .grafico-barras__barra {
+    animation: none;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .grafico-barras__trilho {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .tabela tbody tr:hover {
+    background: none;
+  }
+}
