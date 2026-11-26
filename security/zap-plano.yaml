@@ -1,0 +1,78 @@
+env:
+  contexts:
+    - name: fast-traveller
+      urls:
+        - http://localhost:8000
+      includePaths:
+        - http://localhost:8000.*
+      excludePaths:
+        - http://localhost:8000/logout/.*
+        - http://localhost:8000/viagens/.*/excluir/.*
+        - http://localhost:8000/admin/.*
+        - http://localhost:8000/static/.*
+  parameters:
+    failOnError: true
+    progressToStdout: true
+
+jobs:
+  - type: replacer
+    parameters:
+      deleteAllRules: true
+    rules:
+      - description: sessao do usuario de teste
+        url: http://localhost:8000.*
+        matchType: req_header
+        matchString: Cookie
+        matchRegex: false
+        replacementString: sessionid=${ZAP_SESSAO}
+
+  - type: spider
+    parameters:
+      context: fast-traveller
+      url: http://localhost:8000/viagens/
+      maxDuration: 2
+
+  - type: requestor
+    requests:
+      - url: http://localhost:8000/
+      - url: http://localhost:8000/login/
+      - url: http://localhost:8000/cadastro/
+      - url: http://localhost:8000/viagens/
+      - url: http://localhost:8000/viagens/nova/
+      - url: http://localhost:8000/viagens/${ZAP_VIAGEM}/
+      - url: http://localhost:8000/viagens/${ZAP_VIAGEM}/relatorio/
+      - url: http://localhost:8000/viagens/${ZAP_VIAGEM}/relatorio/csv/
+      - url: http://localhost:8000/api/v1/viagens/
+      - url: http://localhost:8000/api/v1/viagens/${ZAP_VIAGEM}/
+      - url: http://localhost:8000/api/v1/viagens/${ZAP_VIAGEM}/atracoes/
+      - url: http://localhost:8000/api/v1/viagens/${ZAP_VIAGEM}/relatorio/
+      - url: http://localhost:8000/api/docs/
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  - type: activeScan
+    parameters:
+      context: fast-traveller
+      maxScanDurationInMins: 10
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: ${ZAP_SAIDA}
+      reportFile: ${ZAP_NOME}.html
+      reportTitle: fast Traveller - OWASP ZAP
+
+  - type: report
+    parameters:
+      template: traditional-md
+      reportDir: ${ZAP_SAIDA}
+      reportFile: ${ZAP_NOME}.md
+      reportTitle: fast Traveller - OWASP ZAP
+
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: ${ZAP_SAIDA}
+      reportFile: ${ZAP_NOME}.json
