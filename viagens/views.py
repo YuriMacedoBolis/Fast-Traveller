@@ -71,8 +71,17 @@ class ViagemRelatorioView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         relatorio = calcular_relatorio(self.object)
+        custo_total = relatorio["custo_total_estimado"]
+        nomes = dict(Categoria.objects.values_list("slug", "nome"))
+
+        gastos = []
+        for slug, valor in relatorio["gastos_por_categoria"].items():
+            porcentagem = valor / custo_total * 100 if custo_total else 0
+            gastos.append({"nome": nomes.get(slug, slug), "valor": valor, "porcentagem": porcentagem})
+        gastos.sort(key=lambda gasto: gasto["valor"], reverse=True)
 
         contexto["relatorio"] = relatorio
+        contexto["gastos"] = gastos
         contexto["uso_orcamento"] = relatorio["custo_total_estimado"] / relatorio["orcamento_total"] * 100
         contexto["estouro"] = -relatorio["saldo_restante"]
         return contexto

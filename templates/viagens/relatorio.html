@@ -49,4 +49,30 @@
       O roteiro passou do orçamento em R$ {{ estouro|floatformat:"2g" }}.
     </p>
   {% endif %}
+
+  <section class="bloco secao-relatorio">
+    <h2>Gastos por categoria</h2>
+    {% if gastos %}
+      <ul class="grafico-barras">
+        {% for gasto in gastos %}
+          <li class="grafico-barras__linha">
+            <span class="grafico-barras__rotulo">{{ gasto.nome }}</span>
+            <span class="grafico-barras__trilho">
+              <span class="grafico-barras__barra" style="width: {{ gasto.porcentagem|floatformat:0 }}%"></span>
+            </span>
+            <span class="grafico-barras__valor">
+              R$ {{ gasto.valor|floatformat:"2g" }}
+              <small>({{ gasto.porcentagem|floatformat:0 }}%)</small>
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="vazio">
+        <h3>Nenhuma atração no roteiro</h3>
+        <p class="legenda">Escolha atrações para ver como o orçamento será dividido.</p>
+        <a class="btn btn--acao no-print" href="{% url 'viagens:roteiro' viagem.pk %}">Escolher atrações</a>
+      </div>
+    {% endif %}
+  </section>
 {% endblock %}
