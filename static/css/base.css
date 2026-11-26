@@ -993,3 +993,42 @@ a:hover {
     text-align: right;
   }
 }
+
+.tabela-rolagem {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.tabela th,
+.tabela td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--borda);
+}
+
+.tabela th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-suave);
+}
+
+.tabela tbody tr:hover {
+  background: var(--creme);
+}
+
+.tabela tfoot td {
+  font-weight: 700;
+  color: var(--azul-viagem);
+  border-bottom: none;
+}
+
+.tabela__numero {
+  text-align: right !important;
+  white-space: nowrap;
+}

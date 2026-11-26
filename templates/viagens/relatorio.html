@@ -75,4 +75,41 @@
       </div>
     {% endif %}
   </section>
+
+  {% if atracoes %}
+    <section class="bloco secao-relatorio">
+      <h2>Atrações do roteiro</h2>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th>Atração</th>
+              <th>Categoria</th>
+              <th>Endereço</th>
+              <th class="tabela__numero">Tempo</th>
+              <th class="tabela__numero">Custo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for atracao in atracoes %}
+              <tr>
+                <td>{{ atracao.nome }}</td>
+                <td>{{ atracao.categoria.nome }}</td>
+                <td>{{ atracao.endereco|default:"-" }}</td>
+                <td class="tabela__numero">{{ atracao.tempo_estimado_horas|floatformat:1 }} h</td>
+                <td class="tabela__numero">R$ {{ atracao.custo_estimado|floatformat:"2g" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">Total</td>
+              <td class="tabela__numero">{{ viagem.tempo_total_estimado|floatformat:1 }} h</td>
+              <td class="tabela__numero">R$ {{ relatorio.custo_total_estimado|floatformat:"2g" }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  {% endif %}
 {% endblock %}

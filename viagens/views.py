@@ -82,6 +82,7 @@ class ViagemRelatorioView(LoginRequiredMixin, DetailView):
 
         contexto["relatorio"] = relatorio
         contexto["gastos"] = gastos
+        contexto["atracoes"] = self.object.atracoes.select_related("categoria")
         contexto["uso_orcamento"] = relatorio["custo_total_estimado"] / relatorio["orcamento_total"] * 100
         contexto["estouro"] = -relatorio["saldo_restante"]
         return contexto
