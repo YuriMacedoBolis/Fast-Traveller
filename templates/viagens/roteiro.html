@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static l10n %}
+
+{% block titulo %}Roteiro {{ viagem.destino }} &middot; fast Traveller{% endblock %}
+
+{% block conteudo %}
+  <a class="link-voltar" href="{% url 'viagens:lista' %}">&larr; Voltar para minhas viagens</a>
+
+  <div class="cabecalho-pagina">
+    <div>
+      <h1>{{ viagem.destino }}</h1>
+      <p class="legenda">
+        A partir de {{ viagem.data_inicio|date:"d/m/Y" }} &middot;
+        {{ viagem.duracao_dias }} dia{{ viagem.duracao_dias|pluralize }}
+      </p>
+    </div>
+    <div class="cartao-acoes">
+      <a class="btn btn--secundario" href="{% url 'viagens:editar' viagem.pk %}">Editar viagem</a>
+    </div>
+  </div>
+
+  <div id="roteiro" class="roteiro" data-viagem="{{ viagem.pk }}" data-orcamento="{{ viagem.orcamento_total|unlocalize }}">
+    {% csrf_token %}
+
+    <section class="bloco roteiro__busca">
+      <h2>Buscar atrações</h2>
+      <p class="legenda">Escolha as categorias que te interessam e veja o que tem em {{ viagem.destino }}.</p>
+
+      <form id="form-busca" class="filtro-categorias">
+        {% for categoria in categorias %}
+          <label class="chip">
+            <input type="checkbox" name="categorias" value="{{ categoria.slug }}">
+            <span>{{ categoria.nome }}</span>
+          </label>
+        {% endfor %}
+        <button type="submit" class="btn btn--primario" id="botao-busca">Buscar</button>
+      </form>
+
+      <p class="mensagem mensagem--warning" id="aviso-busca" hidden></p>
+      <div id="lista-sugestoes" class="lista-atracoes"></div>
+    </section>
+
+    <aside class="roteiro__lateral">
+      <section class="bloco resumo-orcamento" id="resumo">
+        <div class="dados-viagem dados-viagem--tres">
+          <div>
+            <span class="dado__rotulo">Orçamento</span>
+            <span class="dado__valor" id="valor-orcamento">R$ {{ viagem.orcamento_total|floatformat:2 }}</span>
+          </div>
+          <div>
+            <span class="dado__rotulo">Selecionado</span>
+            <span class="dado__valor" id="valor-selecionado"></span>
+          </div>
+          <div>
+            <span class="dado__rotulo">Saldo</span>
+            <span class="dado__valor" id="valor-saldo"></span>
+          </div>
+        </div>
+        <div class="barra-progresso">
+          <div class="barra-progresso__preenchimento" id="barra-orcamento"></div>
+        </div>
+        <p class="aviso-estouro" id="aviso-estouro" role="alert" hidden>
+          Você passou do orçamento em <strong id="valor-estouro"></strong>.
+        </p>
+      </section>
+
+      <section class="bloco">
+        <h2>Meu roteiro <span class="etiqueta" id="contador-roteiro">0</span></h2>
+        <p class="legenda" id="roteiro-vazio">Nenhuma atração escolhida ainda.</p>
+        <div id="lista-roteiro" class="lista-atracoes"></div>
+      </section>
+    </aside>
+  </div>
+
+  <template id="modelo-atracao">
+    <article class="item-atracao">
+      <div>
+        <h3 class="item-atracao__nome"></h3>
+        <p class="legenda item-atracao__endereco"></p>
+        <div class="item-atracao__etiquetas">
+          <span class="etiqueta item-atracao__categoria"></span>
+          <span class="etiqueta item-atracao__situacao"></span>
+        </div>
+      </div>
+      <div class="item-atracao__lado">
+        <span class="item-atracao__custo"></span>
+        <button type="button" class="btn item-atracao__botao"></button>
+      </div>
+    </article>
+  </template>
+
+  {{ atracoes|json_script:"dados-atracoes" }}
+  {{ nomes_categorias|json_script:"dados-categorias" }}
+{% endblock %}
+
+{% block js_extra %}
+  <script src="{% static 'js/roteiro.js' %}"></script>
+{% endblock %}

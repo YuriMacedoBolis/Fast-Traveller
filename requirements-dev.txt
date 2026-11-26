@@ -2,5 +2,5 @@
 pytest==8.4.2
 pytest-django==4.14.0
 pytest-cov==7.0.0
-responses==0.25.9
+responses==0.25.8
 bandit[toml]==1.9.4

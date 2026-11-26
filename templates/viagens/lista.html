@@ -65,6 +65,7 @@
           </p>
 
           <div class="cartao-acoes">
+            <a class="btn btn--primario" href="{% url 'viagens:roteiro' viagem.pk %}">Ver roteiro</a>
             <a class="btn btn--secundario" href="{% url 'viagens:editar' viagem.pk %}">Editar</a>
             <a class="btn btn--secundario" href="{% url 'viagens:excluir' viagem.pk %}">Excluir</a>
           </div>

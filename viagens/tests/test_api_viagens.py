@@ -161,6 +161,23 @@ class ApiViagensTest(TestCase):
         self.assertEqual(resposta.status_code, 204)
         self.assertEqual(self.viagem.atracoes.count(), 0)
 
+    def test_adicionar_atracao_repetida_retorna_400(self):
+        self.client.force_login(self.ana)
+        dados = {
+            "nome": "Pinacoteca",
+            "categoria": "museu",
+            "custo_estimado": "30.00",
+            "api_external_id": "abc123",
+        }
+        url = f"/api/v1/viagens/{self.viagem.pk}/atracoes/"
+
+        primeira = self.client.post(url, dados, content_type="application/json")
+        segunda = self.client.post(url, dados, content_type="application/json")
+
+        self.assertEqual(primeira.status_code, 201)
+        self.assertEqual(segunda.status_code, 400)
+        self.assertEqual(self.viagem.atracoes.count(), 1)
+
     def test_atualizar_e_excluir_viagem(self):
         self.client.force_login(self.ana)
         resposta = self.client.put(

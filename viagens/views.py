@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
+from viagens.api.serializers import AtracaoSerializer
 from viagens.forms import BuscaViagemForm, ViagemForm
-from viagens.models import Viagem
+from viagens.models import Categoria, Viagem
 
 
 class ViagemListView(LoginRequiredMixin, ListView):
@@ -40,6 +41,24 @@ class ViagemListView(LoginRequiredMixin, ListView):
         return contexto
 
 
+class ViagemDetailView(LoginRequiredMixin, DetailView):
+    model = Viagem
+    template_name = "viagens/roteiro.html"
+    context_object_name = "viagem"
+
+    def get_queryset(self):
+        return Viagem.objects.filter(usuario=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        categorias = Categoria.objects.all()
+        atracoes = self.object.atracoes.select_related("categoria")
+        contexto["categorias"] = categorias
+        contexto["nomes_categorias"] = {c.slug: c.nome for c in categorias}
+        contexto["atracoes"] = AtracaoSerializer(atracoes, many=True).data
+        return contexto
+
+
 class ViagemCreateView(LoginRequiredMixin, CreateView):
     model = Viagem
     form_class = ViagemForm
@@ -55,7 +74,7 @@ class ViagemCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        return reverse_lazy("viagens:lista")
+        return reverse_lazy("viagens:roteiro", args=[self.object.pk])
 
 
 class ViagemUpdateView(LoginRequiredMixin, UpdateView):
