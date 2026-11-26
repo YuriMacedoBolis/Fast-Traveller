@@ -63,7 +63,7 @@
           <li class="grafico-barras__linha">
             <span class="grafico-barras__rotulo">{{ gasto.nome }}</span>
             <span class="grafico-barras__trilho">
-              <span class="grafico-barras__barra" style="width: {{ gasto.porcentagem|floatformat:0 }}%"></span>
+              <span class="grafico-barras__barra" data-porcentagem="{{ gasto.porcentagem|floatformat:0 }}"></span>
             </span>
             <span class="grafico-barras__valor">
               R$ {{ gasto.valor|floatformat:"2g" }}

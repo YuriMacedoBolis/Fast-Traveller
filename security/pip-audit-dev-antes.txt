@@ -1,0 +1,5 @@
+Found 2 known vulnerabilities in 1 package
+Name   Version ID              Fix Versions Description
+------ ------- --------------- ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+pytest 8.4.2   PYSEC-2026-1845 9.0.3        pytest through 9.0.2 on UNIX relies on directories with the `/tmp/pytest-of-{user}` name pattern, which allows local users to cause a denial of service or possibly gain privileges.
+pytest 8.4.2   PYSEC-2026-1845 9.0.3        pytest through 9.0.2 on UNIX relies on directories with the `/tmp/pytest-of-{user}` name pattern, which allows local users to cause a denial of service or possibly gain privileges.

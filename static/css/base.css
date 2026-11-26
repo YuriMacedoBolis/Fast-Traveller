@@ -1091,3 +1091,7 @@ a:hover {
     background: none;
   }
 }
+
+.form-sair {
+  display: inline;
+}
