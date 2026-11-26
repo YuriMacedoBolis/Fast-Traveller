@@ -24,7 +24,7 @@
           <a href="{% url 'viagens:lista' %}">Minhas viagens</a>
           <a href="{% url 'viagens:nova' %}">Nova viagem</a>
           <a href="/api/docs/">API</a>
-          <form action="{% url 'logout' %}" method="post" style="display:inline">
+          <form action="{% url 'logout' %}" method="post" class="form-sair">
             {% csrf_token %}
             <button type="submit" class="btn btn--secundario">Sair</button>
           </form>

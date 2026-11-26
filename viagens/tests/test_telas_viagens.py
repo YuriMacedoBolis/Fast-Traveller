@@ -181,7 +181,7 @@ class RelatorioTest(BaseTelasTest):
         self.assertEqual(gastos[0]["nome"], "Museu")
         self.assertEqual(gastos[0]["valor"], Decimal("75.00"))
         self.assertEqual(gastos[0]["porcentagem"], Decimal("75"))
-        self.assertContains(resposta, 'style="width: 75%"')
+        self.assertContains(resposta, 'data-porcentagem="75"')
 
     def test_relatorio_avisa_quando_passa_do_orcamento(self):
         self.adicionar_atracao("MASP", self.museu, "130.00")
@@ -234,3 +234,11 @@ class ExportarCsvTest(BaseTelasTest):
         self.assertEqual(texto_seguro("@SOMA"), "'@SOMA")
         self.assertEqual(texto_seguro("MASP"), "MASP")
         self.assertEqual(texto_seguro(""), "")
+
+
+class CabecalhosSegurancaTest(BaseTelasTest):
+    def test_paginas_enviam_csp_e_permissions_policy(self):
+        resposta = self.client.get("/login/")
+        self.assertIn("default-src 'self'", resposta["Content-Security-Policy"])
+        self.assertIn("frame-ancestors 'none'", resposta["Content-Security-Policy"])
+        self.assertIn("camera=()", resposta["Permissions-Policy"])
