@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block titulo %}Relatório {{ viagem.destino }} &middot; fast Traveller{% endblock %}
+
+{% block conteudo %}
+  <a class="link-voltar no-print" href="{% url 'viagens:roteiro' viagem.pk %}">&larr; Voltar para o roteiro</a>
+
+  <div class="cabecalho-pagina">
+    <div>
+      <h1>Relatório da viagem</h1>
+      <p class="legenda">
+        {{ viagem.destino }} &middot; a partir de {{ viagem.data_inicio|date:"d/m/Y" }} &middot;
+        {{ viagem.duracao_dias }} dia{{ viagem.duracao_dias|pluralize }}
+      </p>
+    </div>
+  </div>
+
+  <section class="indicadores">
+    <div class="indicador">
+      <span class="dado__rotulo">Orçamento</span>
+      <span class="indicador__valor">R$ {{ relatorio.orcamento_total|floatformat:"2g" }}</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Custo estimado</span>
+      <span class="indicador__valor">R$ {{ relatorio.custo_total_estimado|floatformat:"2g" }}</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Saldo</span>
+      <span class="indicador__valor {% if relatorio.saldo_restante < 0 %}texto-alerta{% else %}texto-sucesso{% endif %}">
+        R$ {{ relatorio.saldo_restante|floatformat:"2g" }}
+      </span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Orçamento usado</span>
+      <span class="indicador__valor">{{ uso_orcamento|floatformat:0 }}%</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Atrações</span>
+      <span class="indicador__valor">{{ relatorio.total_atracoes }}</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Tempo estimado</span>
+      <span class="indicador__valor">{{ viagem.tempo_total_estimado|floatformat:1 }} h</span>
+    </div>
+  </section>
+
+  {% if relatorio.saldo_restante < 0 %}
+    <p class="mensagem mensagem--error">
+      O roteiro passou do orçamento em R$ {{ estouro|floatformat:"2g" }}.
+    </p>
+  {% endif %}
+{% endblock %}

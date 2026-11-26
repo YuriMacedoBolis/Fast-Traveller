@@ -6,6 +6,7 @@ from django.views.generic import CreateView, DeleteView, DetailView, ListView, U
 from viagens.api.serializers import AtracaoSerializer
 from viagens.forms import BuscaViagemForm, ViagemForm
 from viagens.models import Categoria, Viagem
+from viagens.services.sugestoes import calcular_relatorio
 
 
 class ViagemListView(LoginRequiredMixin, ListView):
@@ -56,6 +57,24 @@ class ViagemDetailView(LoginRequiredMixin, DetailView):
         contexto["categorias"] = categorias
         contexto["nomes_categorias"] = {c.slug: c.nome for c in categorias}
         contexto["atracoes"] = AtracaoSerializer(atracoes, many=True).data
+        return contexto
+
+
+class ViagemRelatorioView(LoginRequiredMixin, DetailView):
+    model = Viagem
+    template_name = "viagens/relatorio.html"
+    context_object_name = "viagem"
+
+    def get_queryset(self):
+        return Viagem.objects.filter(usuario=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        relatorio = calcular_relatorio(self.object)
+
+        contexto["relatorio"] = relatorio
+        contexto["uso_orcamento"] = relatorio["custo_total_estimado"] / relatorio["orcamento_total"] * 100
+        contexto["estouro"] = -relatorio["saldo_restante"]
         return contexto
 
 
