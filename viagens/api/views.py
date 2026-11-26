@@ -77,6 +77,14 @@ class ViagemViewSet(viewsets.ModelViewSet):
         viagem = self.get_object()
         serializer = AtracaoCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        id_externo = serializer.validated_data.get("api_external_id")
+        if id_externo and viagem.atracoes.filter(api_external_id=id_externo).exists():
+            return Response(
+                {"detail": "Essa atração já está no roteiro."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         atracao = serializer.save(viagem=viagem)
         return Response(AtracaoSerializer(atracao).data, status=status.HTTP_201_CREATED)
 
