@@ -13,6 +13,9 @@
         {{ viagem.duracao_dias }} dia{{ viagem.duracao_dias|pluralize }}
       </p>
     </div>
+    <div class="cartao-acoes no-print">
+      <a class="btn btn--acao" href="{% url 'viagens:relatorio_csv' viagem.pk %}">Exportar CSV</a>
+    </div>
   </div>
 
   <section class="indicadores">

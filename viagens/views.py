@@ -1,6 +1,11 @@
+import csv
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from viagens.api.serializers import AtracaoSerializer
@@ -86,6 +91,55 @@ class ViagemRelatorioView(LoginRequiredMixin, DetailView):
         contexto["uso_orcamento"] = relatorio["custo_total_estimado"] / relatorio["orcamento_total"] * 100
         contexto["estouro"] = -relatorio["saldo_restante"]
         return contexto
+
+
+def texto_seguro(texto):
+    if texto and texto[0] in ("=", "+", "-", "@", "\t", "\r"):
+        return "'" + texto
+    return texto
+
+
+def valor_br(numero):
+    return f"{numero:.2f}".replace(".", ",")
+
+
+class ViagemRelatorioCsvView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        viagem = get_object_or_404(Viagem, pk=pk, usuario=request.user)
+        relatorio = calcular_relatorio(viagem)
+        nomes = dict(Categoria.objects.values_list("slug", "nome"))
+
+        resposta = HttpResponse(content_type="text/csv; charset=utf-8")
+        resposta["Content-Disposition"] = f'attachment; filename="relatorio-viagem-{viagem.pk}.csv"'
+        resposta.write("﻿")
+
+        escritor = csv.writer(resposta, delimiter=";")
+        escritor.writerow(["Destino", texto_seguro(viagem.destino)])
+        escritor.writerow(["Data de início", viagem.data_inicio.strftime("%d/%m/%Y")])
+        escritor.writerow(["Duração (dias)", viagem.duracao_dias])
+        escritor.writerow(["Orçamento total", valor_br(relatorio["orcamento_total"])])
+        escritor.writerow(["Custo estimado", valor_br(relatorio["custo_total_estimado"])])
+        escritor.writerow(["Saldo", valor_br(relatorio["saldo_restante"])])
+        escritor.writerow([])
+
+        escritor.writerow(["Categoria", "Gasto"])
+        for slug, valor in relatorio["gastos_por_categoria"].items():
+            escritor.writerow([nomes.get(slug, slug), valor_br(valor)])
+        escritor.writerow([])
+
+        escritor.writerow(["Atração", "Categoria", "Endereço", "Tempo (h)", "Custo"])
+        for atracao in viagem.atracoes.select_related("categoria"):
+            escritor.writerow(
+                [
+                    texto_seguro(atracao.nome),
+                    atracao.categoria.nome,
+                    texto_seguro(atracao.endereco),
+                    valor_br(atracao.tempo_estimado_horas),
+                    valor_br(atracao.custo_estimado),
+                ]
+            )
+
+        return resposta
 
 
 class ViagemCreateView(LoginRequiredMixin, CreateView):
