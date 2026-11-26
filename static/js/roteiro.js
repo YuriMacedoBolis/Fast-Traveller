@@ -45,10 +45,24 @@ function totalSelecionado() {
 function atualizarResumo() {
   const total = totalSelecionado();
   const saldo = orcamento - total;
+  const estourou = saldo < 0;
+  const porcentagem = Math.min((total / orcamento) * 100, 100);
 
   document.getElementById("valor-orcamento").textContent = moeda.format(orcamento);
   document.getElementById("valor-selecionado").textContent = moeda.format(total);
-  document.getElementById("valor-saldo").textContent = moeda.format(saldo);
+
+  const campoSaldo = document.getElementById("valor-saldo");
+  campoSaldo.textContent = moeda.format(saldo);
+  campoSaldo.classList.toggle("texto-alerta", estourou);
+  campoSaldo.classList.toggle("texto-sucesso", !estourou);
+
+  const barra = document.getElementById("barra-orcamento");
+  barra.style.width = porcentagem + "%";
+  barra.classList.toggle("barra-progresso__preenchimento--estourado", estourou);
+
+  document.getElementById("resumo").classList.toggle("resumo-orcamento--estourado", estourou);
+  document.getElementById("aviso-estouro").hidden = !estourou;
+  document.getElementById("valor-estouro").textContent = moeda.format(-saldo);
 }
 
 function criarItem(atracao, textoBotao, aoClicar) {
@@ -90,10 +104,17 @@ function mostrarSugestoes() {
   const lista = document.getElementById("lista-sugestoes");
   lista.replaceChildren();
 
+  const saldo = orcamento - totalSelecionado();
+
   sugestoes.forEach((sugestao) => {
     const item = criarItem(sugestao, "Adicionar", adicionar);
     item.querySelector(".item-atracao__botao").classList.add("btn--acao");
-    item.querySelector(".item-atracao__situacao").remove();
+
+    const cabe = Number(sugestao.custo_estimado) <= saldo;
+    const situacao = item.querySelector(".item-atracao__situacao");
+    situacao.textContent = cabe ? "Cabe no orçamento" : "Passa do orçamento";
+    situacao.classList.add(cabe ? "etiqueta--verde" : "etiqueta--vermelha");
+
     lista.append(item);
   });
 }
