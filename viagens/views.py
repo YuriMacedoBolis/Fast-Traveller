@@ -74,7 +74,7 @@ class ViagemCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        return reverse_lazy("viagens:lista")
+        return reverse_lazy("viagens:roteiro", args=[self.object.pk])
 
 
 class ViagemUpdateView(LoginRequiredMixin, UpdateView):
