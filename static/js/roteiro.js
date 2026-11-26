@@ -1,9 +1,42 @@
 const roteiro = document.getElementById("roteiro");
 const orcamento = Number(roteiro.dataset.orcamento);
+const urlViagem = `/api/v1/viagens/${roteiro.dataset.viagem}/`;
+const csrfToken = roteiro.querySelector("[name=csrfmiddlewaretoken]").value;
 const nomesCategorias = JSON.parse(document.getElementById("dados-categorias").textContent);
 const moeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
+const formBusca = document.getElementById("form-busca");
+const botaoBusca = document.getElementById("botao-busca");
+const avisoBusca = document.getElementById("aviso-busca");
+
 let selecionadas = JSON.parse(document.getElementById("dados-atracoes").textContent);
+let sugestoes = [];
+
+async function chamarApi(caminho, opcoes = {}) {
+  const resposta = await fetch(urlViagem + caminho, {
+    ...opcoes,
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
+    },
+  });
+
+  if (!resposta.ok) {
+    const dados = await resposta.json().catch(() => ({}));
+    throw new Error(dados.detail || "Não foi possível concluir a ação. Tente de novo.");
+  }
+
+  if (resposta.status === 204) {
+    return null;
+  }
+  return resposta.json();
+}
+
+function mostrarAviso(texto) {
+  avisoBusca.textContent = texto;
+  avisoBusca.hidden = !texto;
+}
 
 function totalSelecionado() {
   return selecionadas.reduce((soma, atracao) => soma + Number(atracao.custo_estimado), 0);
@@ -52,9 +85,54 @@ function mostrarRoteiro() {
   document.getElementById("roteiro-vazio").hidden = selecionadas.length > 0;
 }
 
+function mostrarSugestoes() {
+  const lista = document.getElementById("lista-sugestoes");
+  lista.replaceChildren();
+
+  sugestoes.forEach((sugestao) => {
+    const item = criarItem(sugestao);
+    item.querySelector(".item-atracao__situacao").remove();
+    lista.append(item);
+  });
+}
+
+async function buscarSugestoes(evento) {
+  evento.preventDefault();
+
+  const marcadas = [...formBusca.querySelectorAll("input:checked")].map((campo) => campo.value);
+  if (marcadas.length === 0) {
+    mostrarAviso("Escolha pelo menos uma categoria.");
+    return;
+  }
+
+  botaoBusca.disabled = true;
+  botaoBusca.textContent = "Buscando...";
+  mostrarAviso("");
+
+  try {
+    const dados = await chamarApi("sugestoes/?categorias=" + encodeURIComponent(marcadas.join(",")));
+    sugestoes = dados.sugestoes;
+
+    if (dados.fonte === "local") {
+      mostrarAviso(`Busca externa indisponível agora (${dados.aviso}). Mostrando atrações já salvas no sistema.`);
+    } else if (sugestoes.length === 0) {
+      mostrarAviso("Nenhuma atração encontrada para essas categorias.");
+    }
+
+    mostrarSugestoes();
+  } catch (erro) {
+    mostrarAviso(erro.message);
+  } finally {
+    botaoBusca.disabled = false;
+    botaoBusca.textContent = "Buscar";
+  }
+}
+
 function atualizarTela() {
   atualizarResumo();
   mostrarRoteiro();
+  mostrarSugestoes();
 }
 
+formBusca.addEventListener("submit", buscarSugestoes);
 atualizarTela();
