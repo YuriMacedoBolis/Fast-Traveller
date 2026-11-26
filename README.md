@@ -443,15 +443,12 @@ A estrutura planejada do projeto é:
 
 ## 7. Participantes
 
-| Nome                   | Matrícula | Função no projeto             |
-| :--------------------- | :-------- | :---------------------------- |
-| [Nome completo]        | [0000000] | Coordenação / Desenvolvimento |
-| [Nome do integrante 2] | [0000000] | Backend / Banco de dados      |
-| [Nome do integrante 3] | [0000000] | Frontend / Interface          |
-| [Nome do integrante 4] | [0000000] | Documentação / Testes         |
-| [Nome do integrante 5] | [0000000] | Análise / Planejamento        |
+| Nome              | Matrícula   | Função no projeto                                      |
+| :---------------- | :---------- | :----------------------------------------------------- |
+| Yuri Macedo Bolis | XXXXXXX     | Backend, API REST, integração Geoapify e deploy        |
+| Vinicius Machado  | 22552504    | Frontend do roteiro e relatório, testes e segurança    |
 
-**Professor(a) responsável:** [Nome do(a) professor(a)]
+**Professor(a) responsável:** Felipe Pires
 
 ---
 
@@ -471,8 +468,8 @@ Antes de executar o projeto, é necessário possuir:
 ### 8.1 Clonar o repositório
 
 ```bash
-git clone https://github.com/[seu-usuario]/fast-traveller.git
-cd fast-traveller
+git clone https://github.com/YuriMacedoBolis/Fast-Traveller.git
+cd Fast-Traveller
 ```
 
 ### 8.2 Criar o ambiente virtual
@@ -859,22 +856,24 @@ A documentação complementar do projeto está organizada em:
 
 ```text
 docs/
-├── visao-geral/
-├── requisitos/
-├── banco-de-dados/
 ├── api/
+├── arquitetura/
+├── banco-de-dados/
+├── casos-de-uso/
+├── planejamento/
 ├── prototipos/
-└── planejamento/
+└── visao/
 ```
 
 Principais documentos:
 
-* [Visão geral e escopo](docs/visao-geral/visao_geral_e_escopo.md)
-* [Requisitos e regras de negócio](docs/requisitos/requisitos_e_regras_de_negocio.md)
+* [Documento de visão](docs/visao/documento_de_visao.md)
+* [Especificação dos casos de uso](docs/casos-de-uso/especificacao_casos_de_uso.md)
+* [Arquitetura](docs/arquitetura/arquitetura.md)
 * [Modelo de dados](docs/banco-de-dados/modelo_de_dados.md)
 * [Contrato e integração da API](docs/api/contrato_e_integracao_api.md)
 * [Protótipos e identidade visual](docs/prototipos/prototipos_e_identidade_visual.md)
-* [Backlog e planejamento](docs/planejamento/backlog_e_planejamento.md)
+* [Backlog e planejamento](docs/planejamento/backlog_e_planejamento)
 
 ---
 
