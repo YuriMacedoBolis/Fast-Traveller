@@ -10,7 +10,7 @@
 
 **Professor(a):** Felipe Pires
 
-**Status do projeto:** Protótipo / Em desenvolvimento — Entrega 1 Concluída
+**Status do projeto:** Em desenvolvimento — Entrega 2 (implementação)
 
 ---
 
@@ -84,14 +84,14 @@ O sistema é destinado principalmente a:
 
 | Funcionalidade                        | Descrição                                              | Status             |
 | :------------------------------------ | :----------------------------------------------------- | :----------------- |
-| **Autenticação de usuário**           | Cadastro, login e encerramento de sessão               | Planejada — Fase 2 |
-| **Gestão de viagens**                 | Criação, consulta, atualização e exclusão de viagens   | Planejada — Fase 2 |
-| **Cadastro dos parâmetros da viagem** | Destino, duração, orçamento e interesses               | Planejada — Fase 2 |
-| **Integração com API externa**        | Consulta de pontos de interesse no destino             | Planejada — Fase 2 |
-| **Busca de atrações**                 | Busca de locais de acordo com as categorias escolhidas | Planejada — Fase 2 |
-| **Montagem do roteiro**               | Seleção e organização das atrações                     | Planejada — Fase 2 |
-| **Controle de orçamento**             | Cálculo do custo estimado e saldo disponível           | Planejada — Fase 2 |
-| **Relatório financeiro**              | Resumo dos gastos da viagem por categoria              | Planejada — Fase 2 |
+| **Autenticação de usuário**           | Cadastro, login e encerramento de sessão               | Implementada       |
+| **Gestão de viagens**                 | Criação, consulta, atualização e exclusão de viagens   | Implementada       |
+| **Cadastro dos parâmetros da viagem** | Destino, duração, orçamento e interesses               | Implementada       |
+| **Integração com API externa**        | Consulta de pontos de interesse no destino             | Implementada       |
+| **Busca de atrações**                 | Busca de locais de acordo com as categorias escolhidas | Implementada       |
+| **Montagem do roteiro**               | Seleção e organização das atrações                     | Implementada       |
+| **Controle de orçamento**             | Cálculo do custo estimado e saldo disponível           | Implementada       |
+| **Relatório financeiro**              | Resumo dos gastos da viagem por categoria              | Implementada       |
 
 ### Requisitos não funcionais
 
@@ -152,14 +152,14 @@ Os protótipos e especificações visuais podem ser consultados em:
 
 | Camada                               | Tecnologia               | Versão                    |
 | :----------------------------------- | :----------------------- | :------------------------ |
-| **Linguagem**                        | Python                   | 3.11+                     |
+| **Linguagem**                        | Python                   | 3.13                      |
 | **Frontend**                         | HTML5, CSS3 e JavaScript | —                         |
 | **Templates**                        | Django Templates         | Django 5.x                |
 | **Framework Backend**                | Django                   | 5.x                       |
 | **API REST**                         | Django REST Framework    | Compatível com Django 5.x |
 | **Banco de dados — desenvolvimento** | SQLite                   | 3.x                       |
 | **Banco de dados — produção**        | PostgreSQL               | 16+                       |
-| **API externa**                      | Google Places API        | Conforme versão utilizada |
+| **API externa**                      | Geoapify Places API      | v2                        |
 | **Controle de versão**               | Git                      | —                         |
 | **Repositório**                      | GitHub                   | —                         |
 | **Editor**                           | Visual Studio Code       | —                         |
@@ -201,7 +201,7 @@ A aplicação é organizada em camadas, permitindo separar a apresentação, as 
        ▼           ▼
 ┌────────────┐ ┌─────────────────┐
 │  Banco de  │ │  API Externa    │
-│   Dados    │ │ Google Places    │
+│   Dados    │ │ Geoapify Places  │
 │            │ │      API         │
 └────────────┘ └─────────────────┘
        │
@@ -232,7 +232,7 @@ Django / REST API
    │
    │ consulta
    ▼
-Google Places API
+Geoapify Places API
    │
    │ retorna atrações
    ▼
@@ -259,7 +259,7 @@ O Django REST Framework será utilizado para estruturar os endpoints da aplicaç
 
 A comunicação com a API externa será realizada pelo backend.
 
-O frontend não terá acesso direto à chave da API do Google.
+O frontend não tem acesso direto à chave da Geoapify.
 
 ```text
 Frontend
@@ -268,7 +268,7 @@ Frontend
 Backend Django
     │
     ▼
-Google Places API
+Geoapify Places API
 ```
 
 Essa abordagem evita a exposição das credenciais e permite que o backend controle o tratamento dos dados recebidos.
@@ -291,7 +291,7 @@ Consultas repetidas poderão ser armazenadas temporariamente para reduzir:
 A chave da API externa será armazenada por meio da variável:
 
 ```text
-GOOGLE_PLACES_API_KEY
+GEOAPIFY_API_KEY
 ```
 
 A chave não deverá ser armazenada diretamente no código-fonte ou versionada no GitHub.
@@ -365,79 +365,46 @@ O contrato completo da API e o plano de integração externa estão documentados
 
 ## 6. Organização dos diretórios
 
-A estrutura planejada do projeto é:
+A estrutura do projeto é:
 
 ```text
 .
 ├── README.md
 ├── .env.example
-├── .gitignore
 ├── requirements.txt
+├── requirements-dev.txt
 ├── manage.py
+├── build.sh
+├── render.yaml
 │
-├── fast_traveller/
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
-│
-├── apps/
-│   ├── usuarios/
-│   ├── viagens/
-│   ├── atracoes/
-│   └── api/
-│
-├── templates/
-│   └── ...
-│
+├── core/            configurações do Django (settings, urls, wsgi)
+├── contas/          usuário, cadastro, login e logout
+├── viagens/
+│   ├── api/         API REST (serializers, views, filtros, permissões)
+│   ├── services/    integração com a Geoapify e cálculo do relatório
+│   ├── management/  comandos seed_categorias e criar_superuser
+│   └── tests/
+├── templates/       páginas HTML (Django Templates)
 ├── static/
 │   ├── css/
-│   ├── js/
-│   └── images/
-│
+│   ├── js/          roteiro.js e relatorio.js
+│   └── img/
+├── security/        relatórios de SAST e DAST
 └── docs/
-    ├── visao-geral/
-    │   └── visao_geral_e_escopo.md
-    │
-    ├── requisitos/
-    │   └── requisitos_e_regras_de_negocio.md
-    │
-    ├── banco-de-dados/
-    │   ├── modelo_de_dados.md
-    │   ├── diagrama_banco.drawio
-    │   └── diagrama_banco.png
-    │
-    ├── api/
-    │   └── contrato_e_integracao_api.md
-    │
-    ├── prototipos/
-    │   ├── prototipos_e_identidade_visual.md
-    │   └── wireframes_telas.png
-    │
-    └── planejamento/
-        └── backlog_e_planejamento.md
 ```
 
 ### Descrição dos principais diretórios
 
-| Diretório / Arquivo    | Função                                     |
-| :--------------------- | :----------------------------------------- |
-| `README.md`            | Documentação principal do projeto          |
-| `.env.example`         | Modelo das variáveis de ambiente           |
-| `.gitignore`           | Arquivos que não devem ser versionados     |
-| `requirements.txt`     | Dependências Python do projeto             |
-| `manage.py`            | Ponto de entrada administrativo do Django  |
-| `fast_traveller/`      | Configurações principais do projeto Django |
-| `apps/`                | Aplicações e módulos do sistema            |
-| `templates/`           | Templates HTML                             |
-| `static/`              | Arquivos CSS, JavaScript e imagens         |
-| `docs/visao-geral/`    | Visão geral e escopo                       |
-| `docs/requisitos/`     | Requisitos e regras de negócio             |
-| `docs/banco-de-dados/` | Modelo e diagramas do banco                |
-| `docs/api/`            | Contrato da API e integração externa       |
-| `docs/prototipos/`     | Protótipos e identidade visual             |
-| `docs/planejamento/`   | Backlog e planejamento das entregas        |
+| Diretório / Arquivo    | Função                                              |
+| :--------------------- | :-------------------------------------------------- |
+| `core/`                | Configurações principais do projeto Django          |
+| `contas/`              | Modelo de usuário e telas de autenticação           |
+| `viagens/`             | Viagens, atrações, roteiro, relatório e API REST    |
+| `viagens/services/`    | Integração com a Geoapify, cache e fallback local   |
+| `templates/`           | Templates HTML                                      |
+| `static/`              | Arquivos CSS, JavaScript e imagens                  |
+| `security/`            | Relatórios do bandit, pip-audit e OWASP ZAP         |
+| `docs/`                | Documentação do projeto                             |
 
 ---
 
@@ -454,14 +421,12 @@ A estrutura planejada do projeto é:
 
 ## 8. Como executar
 
-> **Observação:** Na Entrega 1, o projeto encontra-se principalmente na etapa de planejamento, documentação e prototipação. As instruções abaixo correspondem ao ambiente previsto para a implementação.
-
 ### Pré-requisitos
 
 Antes de executar o projeto, é necessário possuir:
 
 * Git;
-* Python 3.11 ou superior;
+* Python 3.13 (no 3.15 uma das bibliotecas não instala no Windows);
 * pip;
 * Ambiente virtual Python.
 
@@ -510,12 +475,15 @@ No Windows:
 copy .env.example .env
 ```
 
-Depois, preencha as variáveis necessárias.
+Depois, preencha as variáveis necessárias (veja a seção 9). Deixe `DATABASE_URL` vazio para usar o SQLite local.
 
-### 8.5 Executar as migrações
+### 8.5 Preparar o banco local
 
 ```bash
 python manage.py migrate
+python manage.py createcachetable
+python manage.py seed_categorias
+python manage.py createsuperuser
 ```
 
 ### 8.6 Executar o servidor
@@ -530,33 +498,46 @@ O sistema estará disponível em:
 http://127.0.0.1:8000/
 ```
 
+A documentação da API fica em `http://127.0.0.1:8000/api/docs/`.
+
 ---
 
 ## 9. Configuração
 
 O projeto utiliza variáveis de ambiente para armazenar configurações e informações sensíveis.
 
-### Variáveis previstas
+### Variáveis
 
-| Variável                | Obrigatória | Descrição                        | Exemplo                       |
-| :---------------------- | :---------: | :------------------------------- | :---------------------------- |
-| `SECRET_KEY`            |     Sim     | Chave de segurança do Django     | `django-insecure-chave-local` |
-| `DEBUG`                 |     Sim     | Ativa/desativa modo de depuração | `True`                        |
-| `DATABASE_URL`          |     Não     | URL de conexão do banco          | `sqlite:///db.sqlite3`        |
-| `GOOGLE_PLACES_API_KEY` |     Sim     | Chave da API do Google Places    | `sua-chave-aqui`              |
+| Variável                     | Obrigatória | Descrição                                        | Exemplo                 |
+| :--------------------------- | :---------: | :----------------------------------------------- | :---------------------- |
+| `DJANGO_SECRET_KEY`          | Em produção | Chave de segurança do Django                     | gerada pelo comando abaixo |
+| `DJANGO_DEBUG`               |     Não     | Ativa o modo de depuração                        | `True`                  |
+| `DJANGO_ALLOWED_HOSTS`       | Em produção | Domínios aceitos, separados por vírgula          | `fasttraveller.onrender.com` |
+| `DJANGO_CSRF_TRUSTED_ORIGINS`| Em produção | Origens confiáveis para CSRF                     | `https://fasttraveller.onrender.com` |
+| `DATABASE_URL`               |     Não     | Banco PostgreSQL; vazio usa SQLite local         | `postgresql://...`      |
+| `GEOAPIFY_API_KEY`           |     Sim     | Chave da Geoapify                                | `sua-chave-aqui`        |
+| `GEOAPIFY_TIMEOUT`           |     Não     | Timeout das chamadas em segundos                 | `5`                     |
+| `GEOAPIFY_CACHE_TTL`         |     Não     | Tempo do cache em segundos                       | `86400`                 |
+| `GEOAPIFY_RAIO_PADRAO_M`     |     Não     | Raio da busca em metros                          | `5000`                  |
 
-### Exemplo de `.env`
+Para gerar a `DJANGO_SECRET_KEY`:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key as g; print(g())"
+```
+
+### Exemplo de `.env` para desenvolvimento
 
 ```env
-SECRET_KEY=django-insecure-chave-local
-DEBUG=True
-DATABASE_URL=sqlite:///db.sqlite3
-GOOGLE_PLACES_API_KEY=sua-chave-do-google
+DJANGO_DEBUG=True
+DJANGO_SECRET_KEY=cole-a-chave-gerada
+DATABASE_URL=
+GEOAPIFY_API_KEY=sua-chave-da-geoapify
 ```
 
 > **Importante:** O arquivo `.env` não deve ser enviado ao GitHub.
 
-O `.gitignore` deverá conter:
+O `.gitignore` já contém, entre outros:
 
 ```gitignore
 .env
@@ -570,7 +551,7 @@ db.sqlite3
 
 ## 10. Testes
 
-A aplicação deverá possuir testes para validar os principais componentes do sistema.
+O projeto tem testes da API REST e das telas web (autenticação, CRUD de viagens, roteiro, relatório e exportação CSV).
 
 ### Executar testes
 
@@ -589,7 +570,7 @@ python manage.py test
 
 ### Casos importantes
 
-Os testes deverão contemplar, entre outros:
+Os testes contemplam, entre outros:
 
 * Criação de uma viagem;
 * Consulta de uma viagem;
@@ -744,6 +725,7 @@ refactor: reorganiza servico de integracao externa
 
 | Versão    | Data       | Descrição                                                                                                                  |
 | :-------- | :--------- | :------------------------------------------------------------------------------------------------------------------------- |
+| **0.2.0** | 25/11/2026 | Entrega 2: aplicação Django com API REST, integração com a Geoapify, roteiro, relatório, testes e análise de segurança.        |
 | **0.1.0** | 06/10/2026 | Entrega 1 concluída: documentação de visão geral, requisitos, modelo de dados, contrato de API, protótipos e planejamento. |
 | **0.0.1** | 06/10/2026 | Estrutura inicial do repositório e organização da documentação.                                                            |
 
@@ -769,34 +751,34 @@ A implementação funcional será desenvolvida nas etapas seguintes.
 
 #### Sprint 2 — Estrutura e autenticação
 
-* [ ] Inicializar projeto Django.
-* [ ] Configurar banco de dados.
-* [ ] Criar estrutura das aplicações.
-* [ ] Implementar cadastro de usuários.
-* [ ] Implementar login.
-* [ ] Implementar logout.
-* [ ] Criar estrutura inicial da API.
-* [ ] Criar modelos de viagem.
+* [x] Inicializar projeto Django.
+* [x] Configurar banco de dados.
+* [x] Criar estrutura das aplicações.
+* [x] Implementar cadastro de usuários.
+* [x] Implementar login.
+* [x] Implementar logout.
+* [x] Criar estrutura inicial da API.
+* [x] Criar modelos de viagem.
 
 #### Sprint 3 — Viagens e atrações
 
-* [ ] Implementar CRUD de viagens.
-* [ ] Implementar integração com Google Places API.
-* [ ] Implementar busca de atrações.
-* [ ] Implementar filtros por categoria.
-* [ ] Implementar cache.
-* [ ] Implementar tratamento de erros da API externa.
-* [ ] Implementar seleção de atrações.
+* [x] Implementar CRUD de viagens.
+* [x] Implementar integração com a Geoapify.
+* [x] Implementar busca de atrações.
+* [x] Implementar filtros por categoria.
+* [x] Implementar cache.
+* [x] Implementar tratamento de erros da API externa.
+* [x] Implementar seleção de atrações.
 
 #### Sprint 4 — Roteiro e orçamento
 
-* [ ] Implementar montagem do roteiro.
-* [ ] Implementar cálculo de custos.
-* [ ] Implementar cálculo do saldo restante.
-* [ ] Implementar relatório financeiro.
-* [ ] Finalizar integração entre frontend e backend.
-* [ ] Executar testes.
-* [ ] Corrigir problemas identificados.
+* [x] Implementar montagem do roteiro.
+* [x] Implementar cálculo de custos.
+* [x] Implementar cálculo do saldo restante.
+* [x] Implementar relatório financeiro.
+* [x] Finalizar integração entre frontend e backend.
+* [x] Executar testes.
+* [x] Corrigir problemas identificados.
 * [ ] Preparar versão final para apresentação.
 
 ### Evolução futura
@@ -833,8 +815,8 @@ Não é permitida a utilização comercial do projeto sem autorização dos resp
 2. **Django REST Framework**
    https://www.django-rest-framework.org/
 
-3. **Google Places API**
-   https://developers.google.com/maps/documentation/places/web-service
+3. **Geoapify Places API**
+   https://apidocs.geoapify.com/docs/places/
 
 4. **Python**
    https://www.python.org/
