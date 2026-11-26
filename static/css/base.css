@@ -897,3 +897,197 @@ a:hover {
     top: 5.5rem;
   }
 }
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.indicador {
+  padding: 1.1rem 1.25rem;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  animation: surgir 460ms var(--transicao) both;
+}
+
+.indicador__valor {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--azul-viagem);
+}
+
+.secao-relatorio {
+  margin-bottom: 1.5rem;
+}
+
+.grafico-barras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.grafico-barras__linha {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.3rem;
+}
+
+.grafico-barras__rotulo {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.grafico-barras__trilho {
+  height: 14px;
+  background: var(--creme-escuro);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.grafico-barras__barra {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--azul-viagem), var(--laranja-aventura));
+  animation: crescer 700ms var(--transicao) both;
+  transform-origin: left;
+}
+
+.grafico-barras__valor {
+  font-weight: 700;
+  color: var(--azul-viagem);
+  font-size: 0.9375rem;
+}
+
+.grafico-barras__valor small {
+  color: var(--texto-suave);
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .indicadores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1080px) {
+  .indicadores {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@keyframes crescer {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (min-width: 768px) {
+  .grafico-barras__linha {
+    grid-template-columns: 170px 1fr 170px;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .grafico-barras__valor {
+    text-align: right;
+  }
+}
+
+.tabela-rolagem {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.tabela th,
+.tabela td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--borda);
+}
+
+.tabela th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-suave);
+}
+
+.tabela tbody tr:hover {
+  background: var(--creme);
+}
+
+.tabela tfoot td {
+  font-weight: 700;
+  color: var(--azul-viagem);
+  border-bottom: none;
+}
+
+.tabela__numero {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    font-size: 12pt;
+  }
+
+  .conteudo {
+    padding: 0;
+    animation: none;
+  }
+
+  .bloco,
+  .indicador {
+    box-shadow: none;
+    animation: none;
+    break-inside: avoid;
+  }
+
+  .indicadores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grafico-barras__linha {
+    grid-template-columns: 150px 1fr 150px;
+    align-items: center;
+  }
+
+  .grafico-barras__barra {
+    animation: none;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .grafico-barras__trilho {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .tabela tbody tr:hover {
+    background: none;
+  }
+}

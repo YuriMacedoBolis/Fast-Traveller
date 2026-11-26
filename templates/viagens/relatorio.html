@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Relatório {{ viagem.destino }} &middot; fast Traveller{% endblock %}
+
+{% block conteudo %}
+  <a class="link-voltar no-print" href="{% url 'viagens:roteiro' viagem.pk %}">&larr; Voltar para o roteiro</a>
+
+  <div class="cabecalho-pagina">
+    <div>
+      <h1>Relatório da viagem</h1>
+      <p class="legenda">
+        {{ viagem.destino }} &middot; a partir de {{ viagem.data_inicio|date:"d/m/Y" }} &middot;
+        {{ viagem.duracao_dias }} dia{{ viagem.duracao_dias|pluralize }}
+      </p>
+    </div>
+    <div class="cartao-acoes no-print">
+      <button type="button" class="btn btn--primario" id="botao-imprimir">Imprimir</button>
+      <a class="btn btn--acao" href="{% url 'viagens:relatorio_csv' viagem.pk %}">Exportar CSV</a>
+    </div>
+  </div>
+
+  <section class="indicadores">
+    <div class="indicador">
+      <span class="dado__rotulo">Orçamento</span>
+      <span class="indicador__valor">R$ {{ relatorio.orcamento_total|floatformat:"2g" }}</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Custo estimado</span>
+      <span class="indicador__valor">R$ {{ relatorio.custo_total_estimado|floatformat:"2g" }}</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Saldo</span>
+      <span class="indicador__valor {% if relatorio.saldo_restante < 0 %}texto-alerta{% else %}texto-sucesso{% endif %}">
+        R$ {{ relatorio.saldo_restante|floatformat:"2g" }}
+      </span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Orçamento usado</span>
+      <span class="indicador__valor">{{ uso_orcamento|floatformat:0 }}%</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Atrações</span>
+      <span class="indicador__valor">{{ relatorio.total_atracoes }}</span>
+    </div>
+    <div class="indicador">
+      <span class="dado__rotulo">Tempo estimado</span>
+      <span class="indicador__valor">{{ viagem.tempo_total_estimado|floatformat:1 }} h</span>
+    </div>
+  </section>
+
+  {% if relatorio.saldo_restante < 0 %}
+    <p class="mensagem mensagem--error">
+      O roteiro passou do orçamento em R$ {{ estouro|floatformat:"2g" }}.
+    </p>
+  {% endif %}
+
+  <section class="bloco secao-relatorio">
+    <h2>Gastos por categoria</h2>
+    {% if gastos %}
+      <ul class="grafico-barras">
+        {% for gasto in gastos %}
+          <li class="grafico-barras__linha">
+            <span class="grafico-barras__rotulo">{{ gasto.nome }}</span>
+            <span class="grafico-barras__trilho">
+              <span class="grafico-barras__barra" style="width: {{ gasto.porcentagem|floatformat:0 }}%"></span>
+            </span>
+            <span class="grafico-barras__valor">
+              R$ {{ gasto.valor|floatformat:"2g" }}
+              <small>({{ gasto.porcentagem|floatformat:0 }}%)</small>
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="vazio">
+        <h3>Nenhuma atração no roteiro</h3>
+        <p class="legenda">Escolha atrações para ver como o orçamento será dividido.</p>
+        <a class="btn btn--acao no-print" href="{% url 'viagens:roteiro' viagem.pk %}">Escolher atrações</a>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if atracoes %}
+    <section class="bloco secao-relatorio">
+      <h2>Atrações do roteiro</h2>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th>Atração</th>
+              <th>Categoria</th>
+              <th>Endereço</th>
+              <th class="tabela__numero">Tempo</th>
+              <th class="tabela__numero">Custo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for atracao in atracoes %}
+              <tr>
+                <td>{{ atracao.nome }}</td>
+                <td>{{ atracao.categoria.nome }}</td>
+                <td>{{ atracao.endereco|default:"-" }}</td>
+                <td class="tabela__numero">{{ atracao.tempo_estimado_horas|floatformat:1 }} h</td>
+                <td class="tabela__numero">R$ {{ atracao.custo_estimado|floatformat:"2g" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">Total</td>
+              <td class="tabela__numero">{{ viagem.tempo_total_estimado|floatformat:1 }} h</td>
+              <td class="tabela__numero">R$ {{ relatorio.custo_total_estimado|floatformat:"2g" }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}
+
+{% block js_extra %}
+  <script src="{% static 'js/relatorio.js' %}"></script>
+{% endblock %}
