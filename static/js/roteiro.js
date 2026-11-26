@@ -76,7 +76,8 @@ function mostrarRoteiro() {
   lista.replaceChildren();
 
   selecionadas.forEach((atracao) => {
-    const item = criarItem(atracao);
+    const item = criarItem(atracao, "Remover", remover);
+    item.querySelector(".item-atracao__botao").classList.add("btn--secundario");
     item.querySelector(".item-atracao__situacao").remove();
     lista.append(item);
   });
@@ -90,10 +91,48 @@ function mostrarSugestoes() {
   lista.replaceChildren();
 
   sugestoes.forEach((sugestao) => {
-    const item = criarItem(sugestao);
+    const item = criarItem(sugestao, "Adicionar", adicionar);
+    item.querySelector(".item-atracao__botao").classList.add("btn--acao");
     item.querySelector(".item-atracao__situacao").remove();
     lista.append(item);
   });
+}
+
+async function adicionar(sugestao, botao) {
+  botao.disabled = true;
+
+  try {
+    const nova = await chamarApi("atracoes/", {
+      method: "POST",
+      body: JSON.stringify({
+        nome: sugestao.nome,
+        categoria: sugestao.categoria,
+        custo_estimado: sugestao.custo_estimado,
+        tempo_estimado_horas: sugestao.tempo_estimado_horas,
+        endereco: sugestao.endereco,
+        api_external_id: sugestao.api_external_id,
+      }),
+    });
+    selecionadas.push(nova);
+    sugestoes = sugestoes.filter((item) => item !== sugestao);
+    atualizarTela();
+  } catch (erro) {
+    mostrarAviso(erro.message);
+    botao.disabled = false;
+  }
+}
+
+async function remover(atracao, botao) {
+  botao.disabled = true;
+
+  try {
+    await chamarApi(`atracoes/${atracao.id}/`, { method: "DELETE" });
+    selecionadas = selecionadas.filter((item) => item.id !== atracao.id);
+    atualizarTela();
+  } catch (erro) {
+    mostrarAviso(erro.message);
+    botao.disabled = false;
+  }
 }
 
 async function buscarSugestoes(evento) {
