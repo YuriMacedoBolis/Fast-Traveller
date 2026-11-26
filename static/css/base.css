@@ -900,7 +900,7 @@ a:hover {
 
 .indicadores {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -971,6 +971,18 @@ a:hover {
 .grafico-barras__valor small {
   color: var(--texto-suave);
   font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .indicadores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1080px) {
+  .indicadores {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 
 @keyframes crescer {
