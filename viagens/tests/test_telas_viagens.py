@@ -242,3 +242,7 @@ class CabecalhosSegurancaTest(BaseTelasTest):
         self.assertIn("default-src 'self'", resposta["Content-Security-Policy"])
         self.assertIn("frame-ancestors 'none'", resposta["Content-Security-Policy"])
         self.assertIn("camera=()", resposta["Permissions-Policy"])
+
+    def test_cookie_csrf_e_http_only(self):
+        resposta = self.client.get("/login/")
+        self.assertTrue(resposta.cookies["csrftoken"]["httponly"])
